@@ -2,11 +2,10 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>KPSTI AR Clean Version</title>
+  <title>KPSTI AR with Video</title>
 
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-
   <!-- MindAR -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
@@ -21,8 +20,6 @@
       width: 100%;
       height: 100%;
       position: fixed;
-      top: 0;
-      left: 0;
     }
   </style>
 </head>
@@ -31,22 +28,32 @@
 
 <a-scene
   mindar-image="imageTargetSrc: targets/targets.mind;"
-  color-space="sRGB"
   vr-mode-ui="enabled: false"
   device-orientation-permission-ui="enabled: false">
 
-  <!-- LOAD MODEL -->
+  <!-- ASSETS -->
   <a-assets>
+    <!-- 3D MODEL -->
     <a-asset-item id="model" src="models/model.glb"></a-asset-item>
+
+    <!-- YOUR VIDEO FILE -->
+    <video id="video" 
+           src="videos/video.mp4" 
+           preload="auto" 
+           crossorigin="anonymous" 
+           playsinline 
+           webkit-playsinline 
+           muted>
+    </video>
   </a-assets>
 
   <!-- CAMERA -->
   <a-camera position="0 0 0" look-controls="enabled: false">
-    <a-cursor raycaster="objects: .clickable"></a-cursor>
+    <a-cursor raycaster="objects: .clickable" fuse="false"></a-cursor>
   </a-camera>
 
   <!-- MARKER -->
-  <a-entity mindar-image-target="targetIndex: 0" mindar-stable="true">
+  <a-entity mindar-image-target="targetIndex: 0">
 
     <!-- 3D MODEL -->
     <a-gltf-model 
@@ -56,23 +63,25 @@
       animation="property: rotation; to: 0 360 0; loop: true; dur: 8000">
     </a-gltf-model>
 
-    <!-- TEXT -->
-    <a-text 
-      value="KPSTI Info"
-      position="0 0.6 0"
-      align="center"
-      color="#ffffff">
-    </a-text>
+    <!-- VIDEO PLANE (HIDDEN) -->
+    <a-video 
+      id="videoPlane"
+      src="#video"
+      position="0 0 -0.5"
+      width="1"
+      height="0.6"
+      visible="false">
+    </a-video>
 
-    <!-- OPTIONAL BUTTON (YouTube or future use) -->
+    <!-- BUTTON TO PLAY VIDEO -->
     <a-plane 
-      id="button"
+      id="playButton"
       class="clickable"
       color="blue"
       position="0 -0.4 0"
       width="1"
       height="0.4"
-      text="value: Button; align: center">
+      text="value: Play Video; align: center">
     </a-plane>
 
   </a-entity>
@@ -80,9 +89,27 @@
 </a-scene>
 
 <script>
-// Example button (can remove if not needed)
-document.querySelector('#button').addEventListener('click', function () {
-  console.log("Button clicked");
+const video = document.querySelector('#video');
+const videoPlane = document.querySelector('#videoPlane');
+const playButton = document.querySelector('#playButton');
+const model = document.querySelector('a-gltf-model');
+
+playButton.addEventListener('click', function () {
+  console.log("Play button clicked");
+
+  // Hide 3D model
+  model.setAttribute('visible', false);
+
+  // Show video
+  videoPlane.setAttribute('visible', true);
+
+  // Play video (muted to allow mobile autoplay)
+  video.muted = true;
+  video.play().then(() => {
+    console.log("Video playing");
+  }).catch(err => {
+    console.log("Error:", err);
+  });
 });
 </script>
 
