@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>AR Video Click Fix</title>
+  <title>AR Video FIXED</title>
 
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -18,8 +18,6 @@
       width: 100%;
       height: 100%;
       position: fixed;
-      top: 0;
-      left: 0;
     }
   </style>
 </head>
@@ -31,29 +29,26 @@
   vr-mode-ui="enabled: false"
   device-orientation-permission-ui="enabled: false">
 
-  <!-- ASSETS -->
   <a-assets>
-    <a-asset-item id="model" src="models/model.glb"></a-asset-item>
-    <video id="video" src="video.mp4" preload="auto" crossorigin="anonymous"></video>
+
+    <!-- TEST VIDEO -->
+    <video 
+      id="video"
+      src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+      preload="auto"
+      crossorigin="anonymous"
+      playsinline
+      webkit-playsinline
+      muted>
+    </video>
+
   </a-assets>
 
-  <!-- CAMERA WITH CLICK FIX -->
   <a-camera position="0 0 0" look-controls="enabled: false">
-    <a-cursor
-      raycaster="objects: .clickable"
-      fuse="false">
-    </a-cursor>
+    <a-cursor raycaster="objects: .clickable"></a-cursor>
   </a-camera>
 
-  <!-- MARKER -->
   <a-entity mindar-image-target="targetIndex: 0">
-
-    <!-- MODEL -->
-    <a-gltf-model 
-      src="#model"
-      position="0 0 -0.5"
-      scale="0.5 0.5 0.5">
-    </a-gltf-model>
 
     <!-- VIDEO -->
     <a-video 
@@ -70,9 +65,9 @@
       id="playButton"
       class="clickable"
       color="blue"
-      position="0 -0.5 0"
-      width="0.7"
-      height="0.3"
+      position="0 -0.3 0"
+      width="1"
+      height="0.4"
       text="value: Play Video; align: center">
     </a-plane>
 
@@ -84,15 +79,18 @@
 const video = document.querySelector('#video');
 const videoPlane = document.querySelector('#videoPlane');
 const button = document.querySelector('#playButton');
-const model = document.querySelector('a-gltf-model');
 
 button.addEventListener('click', function () {
-  console.log("Button clicked ✅");
+  console.log("CLICKED");
 
   videoPlane.setAttribute('visible', true);
-  model.setAttribute('visible', false);
 
-  video.play();
+  video.muted = true;
+  video.play().then(() => {
+    console.log("Video playing ✅");
+  }).catch(err => {
+    console.log("Error:", err);
+  });
 });
 </script>
 
